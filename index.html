@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Zoe Hartwell - zoe.ai</title>
+    <style>
+        #chat-container { width: 80%; margin: 20px auto; }
+        #chat-output { height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; }
+        #user-input { width: 70%; padding: 5px; }
+        button { padding: 5px 10px; }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <h1>Chat with Zoe</h1>
+        <div id="chat-output"></div>
+        <input id="user-input" type="text" placeholder="Type your message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById("user-input").value;
+            if (!input) return;
+            
+            const output = document.getElementById("chat-output");
+            output.innerHTML += `<p>You: ${input}</p>`;
+            
+            const response = await fetch("http://127.0.0.1:5000/chat", {  // Change from localhost to 127.0.0.1
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: input })
+            });
+            
+            const data = await response.json();
+            output.innerHTML += `<p>Zoe: ${data.reply}</p>`;
+            document.getElementById("user-input").value = "";
+            output.scrollTop = output.scrollHeight;  // Auto-scroll to latest
+        }
+        
+        // Optional: Send on Enter key
+        document.getElementById("user-input").addEventListener("keypress", function(e) {
+            if (e.key === "Enter") sendMessage();
+        });
+    </script>
+</body>
+</html>
